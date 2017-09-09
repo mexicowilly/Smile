@@ -65,7 +65,7 @@ void output_packet::finish()
     {
         std::uint32_t i;
         std::uint8_t b;
-    } u{boost::endian::native_to_big(static_cast<std::uint32_t>(bytes_.size() + sizeof(std::uint32_t)))};
+    } u{boost::endian::native_to_big(static_cast<uint32_t>(bytes_.size()))};
     *(reinterpret_cast<std::uint32_t*>(&bytes_[0])) = u.i;
 }
 

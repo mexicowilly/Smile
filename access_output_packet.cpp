@@ -1,5 +1,7 @@
 #include "access_output_packet.hpp"
-#include <assert.h>
+#include <cassert>
+
+#include "literal.hpp"
 
 namespace smile
 {
