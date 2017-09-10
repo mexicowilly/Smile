@@ -16,8 +16,6 @@
 
 #include "output_packet.hpp"
 
-#include <boost/endian/conversion.hpp>
-
 namespace smile
 {
 
@@ -61,13 +59,8 @@ output_packet& output_packet::operator<<(std::uint64_t i)
 
 void output_packet::finish()
 {
-    union
-    {
-        std::uint32_t i;
-        std::uint8_t b;
-    } u{boost::endian::native_to_big(static_cast<uint32_t>(bytes_.size()))};
-    *(reinterpret_cast<std::uint32_t*>(&bytes_[0])) = u.i;
+    std::uint32_t i = boost::endian::native_to_big(static_cast<uint32_t>(bytes_.size()));
+    *(reinterpret_cast<std::uint32_t*>(&bytes_[0])) = i;
 }
 
 }
-

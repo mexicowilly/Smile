@@ -1,8 +1,6 @@
 #include "access_output_packet.hpp"
 #include <cassert>
 
-#include "literal.hpp"
-
 namespace smile
 {
 

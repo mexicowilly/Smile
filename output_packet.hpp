@@ -17,6 +17,7 @@
 #ifndef SMILE_OUTPUT_PACKET_HPP
 #define SMILE_OUTPUT_PACKET_HPP
 
+#include <boost/endian/conversion.hpp>
 #include <vector>
 #include <cstdint>
 
@@ -28,6 +29,8 @@ class output_packet
 public:
     output_packet();
 
+    output_packet& operator<< (std::int8_t i);
+    output_packet& operator<< (std::uint8_t i);
     output_packet& operator<< (std::int16_t i);
     output_packet& operator<< (std::uint16_t i);
     output_packet& operator<< (std::int32_t i);
@@ -38,11 +41,31 @@ public:
 
     const std::vector<std::uint8_t>& bytes() const;
     void finish();
+    template<typename T>
+    typename std::enable_if<std::is_integral<T>::value>::type set(std::size_t offset, T val)
+    {
+        std::size_t new_end = offset + sizeof(val);
+        if (new_end >= bytes_.size())
+            bytes_.resize(new_end, 0);
+        T i = boost::endian::native_to_big(static_cast<uint32_t>(val));
+        *(reinterpret_cast<T*>(&bytes_[offset])) = i;
+    }
     void skip(std::size_t bytes);
 
 private:
     std::vector<std::uint8_t> bytes_;
 };
+
+inline output_packet& output_packet::operator<< (std::int8_t i)
+{
+    return operator<<(static_cast<uint8_t>(i));
+}
+
+inline output_packet& output_packet::operator<< (std::uint8_t i)
+{
+    bytes_.push_back(i);
+    return *this;
+}
 
 inline output_packet& output_packet::operator<< (std::int16_t i)
 {
