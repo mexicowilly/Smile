@@ -28,14 +28,11 @@ class output_packet
 {
 public:
     output_packet();
+    virtual ~output_packet();
 
-    output_packet& operator<< (std::int8_t i);
     output_packet& operator<< (std::uint8_t i);
-    output_packet& operator<< (std::int16_t i);
     output_packet& operator<< (std::uint16_t i);
-    output_packet& operator<< (std::int32_t i);
     output_packet& operator<< (std::uint32_t i);
-    output_packet& operator<< (std::int64_t i);
     output_packet& operator<< (std::uint64_t i);
     output_packet& operator<< (const std::vector<std::uint8_t>& bytes);
 
@@ -56,30 +53,10 @@ private:
     std::vector<std::uint8_t> bytes_;
 };
 
-inline output_packet& output_packet::operator<< (std::int8_t i)
-{
-    return operator<<(static_cast<uint8_t>(i));
-}
-
 inline output_packet& output_packet::operator<< (std::uint8_t i)
 {
     bytes_.push_back(i);
     return *this;
-}
-
-inline output_packet& output_packet::operator<< (std::int16_t i)
-{
-    return operator<<(static_cast<uint16_t>(i));
-}
-
-inline output_packet& output_packet::operator<< (std::int32_t i)
-{
-    return operator<<(static_cast<uint32_t>(i));
-}
-
-inline output_packet& output_packet::operator<< (std::int64_t i)
-{
-    return operator<<(static_cast<uint64_t>(i));
 }
 
 inline output_packet& output_packet::operator<< (const std::vector<std::uint8_t>& bytes)

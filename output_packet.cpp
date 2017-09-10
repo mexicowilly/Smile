@@ -24,6 +24,10 @@ output_packet::output_packet()
     skip(sizeof(std::uint32_t));
 }
 
+output_packet::~output_packet()
+{
+}
+
 output_packet& output_packet::operator<<(std::uint16_t i)
 {
     union
