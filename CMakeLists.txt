@@ -9,9 +9,57 @@ find_package(Threads REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenSSL REQUIRED)
 find_package(ICU REQUIRED COMPONENTS io i18n uc data)
+find_path(CHUCHO_INCLUDE_DIR chucho/log.hpp)
+if (NOT CHUCHO_INCLUDE_DIR)
+    message(FATAL_ERROR "Could not find chucho/log.hpp")
+endif()
+find_library(CHUCHO_LIBRARY chucho)
+if(NOT CHUCHO_LIBRARY)
+    message(FATAL_ERROR "Could not find libchucho")
+endif()
 
-include_directories(include ${Boost_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR} ${ICU_INCLUDE_DIRS})
+include_directories(include
+                    ${Boost_INCLUDE_DIRS}
+                    ${OPENSSL_INCLUDE_DIR}
+                    ${ICU_INCLUDE_DIRS}
+                    ${CHUCHO_INCLUDE_DIR})
 
-set(SOURCE_FILES output_packet.cpp output_packet.hpp literal.hpp access_output_packet.hpp access_output_packet.cpp service.hpp service_port_map.hpp service_port_map.cpp request.hpp access_request.hpp reply.hpp input_packet.hpp input_packet.cpp access_reply.hpp access_input_packet.hpp access_input_packet.cpp signon_text.hpp signon_text.cpp include/smile/os400_version.hpp os400_version.cpp)
-add_library(smile ${SOURCE_FILES})
-target_link_libraries(smile ${Boost_LIBRARIES} ${ICU_LIBRARIES} ${OPENSSL_LIBRARIES} Threads::Threads)
+set(SMILE_PUBLIC_HEADERS
+    include/smile/as400.hpp
+    include/smile/os400_version.hpp)
+set(SMILE_PRIVATE_HEADERS
+    access_input_packet.hpp
+    access_output_packet.hpp
+    access_reply.hpp
+    access_request.hpp
+    input_packet.hpp
+    literal.hpp
+    output_packet.hpp
+    reply.hpp
+    request.hpp
+    service.hpp
+    service_port_map.hpp
+    signon_text.hpp
+    text_conversion.hpp)
+set(SMILE_SOURCES
+    access_input_packet.cpp
+    access_output_packet.cpp
+    as400.cpp
+    input_packet.cpp
+    os400_version.cpp
+    output_packet.cpp
+    service.cpp
+    service_port_map.cpp
+    signon_text.cpp
+    text_conversion.cpp)
+
+add_library(smile
+    ${SMILE_PUBLIC_HEADERS}
+    ${SMILE_PRIVATE_HEADERS}
+    ${SMILE_SOURCES})
+target_link_libraries(smile
+    ${Boost_LIBRARIES}
+    ${ICU_LIBRARIES}
+    ${OPENSSL_LIBRARIES}
+    ${CHUCHO_LIBRARY}
+    Threads::Threads)

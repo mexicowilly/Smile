@@ -1,7 +1,5 @@
 #include <smile/os400_version.hpp>
 
-#include <unicode/ustdio.h>
-
 #include <stdexcept>
 #include <sstream>
 
@@ -14,14 +12,14 @@ os400_version::os400_version(std::uint16_t version, std::uint8_t release, std::u
 {
 }
 
-os400_version::os400_version(UnicodeString& desc)
+os400_version::os400_version(const std::string& desc)
 {
     unsigned version;
     unsigned release;
     unsigned modification;
-    int count = u_sscanf(desc.getTerminatedBuffer(), "V%uR%uM%u", &version, &release, &modification);
+    int count = std::sscanf(desc.c_str(), "V%uR%uM%u", &version, &release, &modification);
     if (count != 3)
-        throw std::runtime_error("Error scanning version descriptor");
+        throw std::invalid_argument("Error scanning version descriptor: " + desc);
     packed_ = (version << 16) | (release << 8) | modification;
 }
 

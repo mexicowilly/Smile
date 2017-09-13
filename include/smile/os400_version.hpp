@@ -1,21 +1,24 @@
 #ifndef SMILE_OS400_VERSION_HPP
 #define SMILE_OS400_VERSION_HPP
 
-#include <unicode/unistr.h>
+#include <boost/operators.hpp>
 
+#include <string>
 #include <cstdint>
 
 namespace smile
 {
 
-class os400_version
+class os400_version : public boost::totally_ordered<os400_version>
 {
 public:
     os400_version();
     os400_version(std::uint32_t packed);
     os400_version(std::uint16_t version, std::uint8_t release, std::uint8_t modification);
-    // Not const because we have to null-terminate it
-    os400_version(UnicodeString& desc);
+    os400_version(const std::string& desc);
+
+    bool operator== (const os400_version& other) const;
+    bool operator< (const os400_version& other) const;
 
     std::uint8_t modification() const;
     std::uint32_t packed() const;
@@ -30,6 +33,16 @@ private:
 inline os400_version::os400_version()
     : packed_(0)
 {
+}
+
+inline bool os400_version::operator== (const os400_version& other) const
+{
+    return packed_ == other.packed_;
+}
+
+inline bool os400_version::operator< (const os400_version& other) const
+{
+    return packed_ < other.packed_;
 }
 
 inline os400_version::os400_version(std::uint32_t packed)
