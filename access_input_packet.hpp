@@ -9,7 +9,7 @@ namespace smile
 class access_input_packet : public input_packet
 {
 public:
-    access_input_packet(const std::uint8_t* const bytes, std::size_t s);
+    access_input_packet(const std::vector<std::uint8_t>& bytes);
 
     std::uint32_t correlation_id() const;
     std::uint16_t request_reply_id() const;

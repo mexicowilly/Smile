@@ -62,10 +62,12 @@ void service::read_data_handler(std::shared_ptr<service> myself,
     else
     {
         buf->insert(buf->begin(), sizeof(std::uint32_t));
+        *reinterpret_cast<std::uint32_t*>(&buf->at(0)) = boost::endian::native_to_big(buf->size());
         rp.bytes = buf;
     }
     std::lock_guard<std::mutex> lock(reply_guard_);
     replies_[correlation_id] = rp;
+    reply_added_.notify_one();
 }
 
 void service::read_length_handler(std::shared_ptr<service> myself,
@@ -80,6 +82,7 @@ void service::read_length_handler(std::shared_ptr<service> myself,
         rp.except = std::make_exception_ptr(std::runtime_error("Error reading packet length: " + ec.message()));
         std::lock_guard<std::mutex> lock(reply_guard_);
         replies_[correlation_id] = rp;
+        reply_added_.notify_one();
     }
     else
     {
@@ -96,6 +99,31 @@ void service::read_length_handler(std::shared_ptr<service> myself,
                                           std::placeholders::_1,
                                           std::placeholders::_2));
     }
+}
+
+void service::receive(std::uint32_t correlation_id,
+                      receipt_handler handler,
+                      std::chrono::milliseconds max_wait)
+{
+    raw_reply rp;
+    std::unique_lock<std::mutex> lock(reply_guard_);
+    if(reply_added_.wait_for(lock,
+                             max_wait,
+                             [&]() { return replies_.find(correlation_id) != replies_.end(); }))
+    {
+        auto found = replies_.find(correlation_id);
+        assert(found != replies_.end());
+        rp = found->second;
+        replies_.erase(found);
+    }
+    else
+    {
+        rp.except = std::make_exception_ptr(std::runtime_error("Timeout waiting for reply " +
+                                                                   std::to_string(correlation_id)));
+    }
+    lock.unlock();
+    access_input_packet packet(*rp.bytes);
+    handler(packet, rp.except);
 }
 
 void service::resolve_handler(std::shared_ptr<service> myself,
@@ -147,6 +175,7 @@ void service::send_handler(std::shared_ptr<service> myself,
         rp.except = std::make_exception_ptr(std::runtime_error("Error sending: " + ec.message()));
         std::lock_guard<std::mutex> lock(reply_guard_);
         replies_[correlation_id] = rp;
+        reply_added_.notify_one();
     }
     else
     {

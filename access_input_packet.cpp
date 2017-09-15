@@ -3,8 +3,8 @@
 namespace smile
 {
 
-access_input_packet::access_input_packet(const std::uint8_t* const bytes, std::size_t s)
-    : input_packet(bytes, s)
+access_input_packet::access_input_packet(const std::vector<std::uint8_t>& bytes)
+    : input_packet(&bytes[0], bytes.size())
 {
     skip(20);
 }

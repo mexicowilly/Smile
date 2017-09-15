@@ -44,6 +44,7 @@ set(SMILE_PRIVATE_HEADERS
 set(SMILE_SOURCES
     access_input_packet.cpp
     access_output_packet.cpp
+    access_request.cpp
     as400.cpp
     input_packet.cpp
     os400_version.cpp
