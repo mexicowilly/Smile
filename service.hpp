@@ -2,11 +2,15 @@
 #define SMILE_SERVICE_HPP
 
 #include "service_port_map.hpp"
+#include "access_reply.hpp"
+#include "access_request.hpp"
 
 #include <boost/asio.hpp>
+#include <boost/signals2/signal.hpp>
 #include <chucho/loggable.hpp>
 
 #include <string>
+#include <map>
 
 namespace smile
 {
@@ -28,11 +32,12 @@ public:
 
     void connect();
 
+    boost::signals2::connection connect_to_connect_sig(std::function<void(const std::string& system_name,
+                                                                          const char* const service_name,
+                                                                          std::uint16_t port)> func);
     virtual const char* name() const = 0;
     virtual std::uint16_t id() const = 0;
-
-protected:
-    boost::asio::io_service& io_;
+    void send(access_request& req);
 
 private:
     void connect_handler(std::shared_ptr<service> myself,
@@ -40,11 +45,36 @@ private:
     void resolve_handler(std::shared_ptr<service> myself,
                          const boost::system::error_code& ec,
                          boost::asio::ip::tcp::resolver::iterator itor);
+    void read_length_handler(std::shared_ptr<service> myself,
+                             std::shared_ptr<std::array<std::uint8_t, sizeof(std::uint32_t)>> buf,
+                             std::uint32_t correlation_id,
+                             const boost::system::error_code& ec,
+                             std::size_t count);
+    void send_handler(std::shared_ptr<service> myself,
+                      std::shared_ptr<std::vector<std::uint8_t>> data,
+                      std::uint32_t correlation_id,
+                      const boost::system::error_code& ec,
+                      std::size_t bytes_transferred);
 
+    boost::asio::io_service& io_;
+    std::uint16_t port_;
     service_port_map& port_map_;
     std::string system_name_;
     boost::asio::ip::tcp::socket sock_;
+    std::atomic<std::uint32_t> correlation_;
+    boost::signals2::signal<void(const std::string& system_name,
+                                 const char* const service_name,
+                                 std::uint16_t port)> connect_sig_;
+    std::map<std::uint32_t, std::unique_ptr<access_reply>> replies_;
+    std::mutex reply_guard_;
 };
+
+inline boost::signals2::connection service::connect_to_connect_sig(std::function<void(const std::string&,
+                                                                                      const char* const,
+                                                                                      std::uint16_t)> func)
+{
+    return connect_sig_.connect(func);
+}
 
 }
 
