@@ -2,6 +2,8 @@
 
 #include <chucho/log.hpp>
 
+#include <boost/endian/conversion.hpp>
+
 namespace smile
 {
 
@@ -46,13 +48,54 @@ void service::connect_handler(std::shared_ptr<service> myself,
     }
 }
 
+void service::read_data_handler(std::shared_ptr<service> myself,
+                                std::shared_ptr<std::vector<std::uint8_t>> buf,
+                                std::uint32_t correlation_id,
+                                const boost::system::error_code& ec,
+                                std::size_t count)
+{
+    raw_reply rp;
+    if (ec)
+    {
+        rp.except = std::make_exception_ptr(std::runtime_error("Error reading packet data: " + ec.message()));
+    }
+    else
+    {
+        buf->insert(buf->begin(), sizeof(std::uint32_t));
+        rp.bytes = buf;
+    }
+    std::lock_guard<std::mutex> lock(reply_guard_);
+    replies_[correlation_id] = rp;
+}
+
 void service::read_length_handler(std::shared_ptr<service> myself,
                                   std::shared_ptr<std::array<std::uint8_t, sizeof(std::uint32_t)>> buf,
                                   std::uint32_t correlation_id,
                                   const boost::system::error_code& ec,
                                   std::size_t count)
 {
-
+    if (ec)
+    {
+        raw_reply rp;
+        rp.except = std::make_exception_ptr(std::runtime_error("Error reading packet length: " + ec.message()));
+        std::lock_guard<std::mutex> lock(reply_guard_);
+        replies_[correlation_id] = rp;
+    }
+    else
+    {
+        auto buf_len = boost::endian::big_to_native(*reinterpret_cast<std::uint32_t*>(buf->begin())) -
+            sizeof(std::uint32_t);
+        auto dbuf = std::make_shared<std::vector<std::uint8_t>>(buf_len);
+        boost::asio::async_read(sock_,
+                                boost::asio::buffer(*buf),
+                                std::bind(&service::read_data_handler,
+                                          this,
+                                          myself,
+                                          dbuf,
+                                          correlation_id,
+                                          std::placeholders::_1,
+                                          std::placeholders::_2));
+    }
 }
 
 void service::resolve_handler(std::shared_ptr<service> myself,
@@ -98,16 +141,26 @@ void service::send_handler(std::shared_ptr<service> myself,
                            const boost::system::error_code& ec,
                            std::size_t bytes_transferred)
 {
-    auto buf = std::make_shared<std::array<std::uint8_t, sizeof(std::uint32_t)>>();
-    boost::asio::async_read(sock_,
-                            boost::asio::buffer(*buf),
-                            std::bind(&service::read_length_handler,
-                                      this,
-                                      myself,
-                                      buf,
-                                      correlation_id,
-                                      std::placeholders::_1,
-                                      std::placeholders::_2));
+    if (ec)
+    {
+        raw_reply rp;
+        rp.except = std::make_exception_ptr(std::runtime_error("Error sending: " + ec.message()));
+        std::lock_guard<std::mutex> lock(reply_guard_);
+        replies_[correlation_id] = rp;
+    }
+    else
+    {
+        auto buf = std::make_shared<std::array<std::uint8_t, sizeof(std::uint32_t)>>();
+        boost::asio::async_read(sock_,
+                                boost::asio::buffer(*buf),
+                                std::bind(&service::read_length_handler,
+                                          this,
+                                          myself,
+                                          buf,
+                                          correlation_id,
+                                          std::placeholders::_1,
+                                          std::placeholders::_2));
+    }
 }
 
 }

@@ -40,11 +40,22 @@ public:
     void send(access_request& req);
 
 private:
+    struct raw_reply
+    {
+        std::shared_ptr<std::vector<std::uint8_t>> bytes;
+        std::exception_ptr except;
+    };
+
     void connect_handler(std::shared_ptr<service> myself,
                          const boost::system::error_code& ec);
     void resolve_handler(std::shared_ptr<service> myself,
                          const boost::system::error_code& ec,
                          boost::asio::ip::tcp::resolver::iterator itor);
+    void read_data_handler(std::shared_ptr<service> myself,
+                           std::shared_ptr<std::vector<std::uint8_t>> buf,
+                           std::uint32_t correlation_id,
+                           const boost::system::error_code& ec,
+                           std::size_t count);
     void read_length_handler(std::shared_ptr<service> myself,
                              std::shared_ptr<std::array<std::uint8_t, sizeof(std::uint32_t)>> buf,
                              std::uint32_t correlation_id,
@@ -65,7 +76,7 @@ private:
     boost::signals2::signal<void(const std::string& system_name,
                                  const char* const service_name,
                                  std::uint16_t port)> connect_sig_;
-    std::map<std::uint32_t, std::unique_ptr<access_reply>> replies_;
+    std::map<std::uint32_t, raw_reply> replies_;
     std::mutex reply_guard_;
 };
 
