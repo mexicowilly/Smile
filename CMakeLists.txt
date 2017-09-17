@@ -33,6 +33,7 @@ set(SMILE_PRIVATE_HEADERS
     access_reply.hpp
     access_request.hpp
     auth_type.hpp
+    credential_store.hpp
     end_signon_service_request.hpp
     icu_exception.hpp
     input_packet.hpp
@@ -52,6 +53,7 @@ set(SMILE_SOURCES
     access_output_packet.cpp
     access_request.cpp
     as400.cpp
+    credential_store.cpp
     icu_exception.cpp
     input_packet.cpp
     os400_version.cpp
