@@ -33,6 +33,7 @@ set(SMILE_PRIVATE_HEADERS
     access_reply.hpp
     access_request.hpp
     auth_type.hpp
+    end_signon_service_request.hpp
     icu_exception.hpp
     input_packet.hpp
     literal.hpp
@@ -59,6 +60,7 @@ set(SMILE_SOURCES
     service_port_map.cpp
     signon_info_reply.cpp
     signon_info_request.cpp
+    signon_service.cpp
     signon_text.cpp
     text_conversion.cpp)
 

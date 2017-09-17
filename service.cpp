@@ -193,4 +193,38 @@ void service::send_handler(std::shared_ptr<service> myself,
     }
 }
 
+void service::send_no_reply(access_request& req, std::chrono::milliseconds max_wait)
+{
+    auto corr = correlation_++;
+    req.set_correlation_id(corr);
+    req.finish();
+    auto buf = std::make_shared<std::vector<std::uint8_t>>(req.bytes());
+    auto prom = std::make_shared<std::promise<void>>();
+    auto fut = prom->get_future();
+    boost::asio::async_write(sock_,
+                             boost::asio::buffer(*buf),
+                             std::bind(&service::send_no_reply_handler,
+                                       this,
+                                       shared_from_this(),
+                                       buf,
+                                       corr,
+                                       prom,
+                                       std::placeholders::_1,
+                                       std::placeholders::_2));
+    if(fut.wait_for(max_wait) == std::future_status::timeout)
+        CHUCHO_ERROR_LGBL("Timed out waiting for the no-reply send to finish");
+}
+
+void service::send_no_reply_handler(std::shared_ptr<service> myself,
+                                    std::shared_ptr<std::vector<std::uint8_t>> data,
+                                    std::uint32_t correlation_id,
+                                    std::shared_ptr<std::promise<void>> prom,
+                                    const boost::system::error_code& ec,
+                                    std::size_t bytes_transferred)
+{
+    if (ec)
+        CHUCHO_ERROR_LGBL("Error sending no-reply data: " << ec.message());
+    prom->set_value();
+}
+
 }

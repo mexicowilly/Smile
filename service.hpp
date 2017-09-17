@@ -14,6 +14,7 @@
 #include <map>
 #include <chrono>
 #include <condition_variable>
+#include <future>
 
 namespace smile
 {
@@ -38,11 +39,12 @@ public:
     boost::signals2::connection connect_to_connect_sig(std::function<void(const std::string& system_name,
                                                                           const char* const service_name,
                                                                           std::uint16_t port)> func);
-    virtual const char* name() const = 0;
     virtual std::uint16_t id() const = 0;
+    virtual const char* name() const = 0;
     std::unique_ptr<access_reply> receive(std::uint32_t correlation_id,
                                           std::chrono::milliseconds max_wait);
     void send(access_request& req);
+    void send_no_reply(access_request& req, std::chrono::milliseconds max_wait);
 
 protected:
     virtual std::unique_ptr<access_reply> packet_to_reply(const access_input_packet& packet) const = 0;
@@ -74,6 +76,12 @@ private:
                       std::uint32_t correlation_id,
                       const boost::system::error_code& ec,
                       std::size_t bytes_transferred);
+    void send_no_reply_handler(std::shared_ptr<service> myself,
+                               std::shared_ptr<std::vector<std::uint8_t>> data,
+                               std::uint32_t correlation_id,
+                               std::shared_ptr<std::promise<void>> prom,
+                               const boost::system::error_code& ec,
+                               std::size_t bytes_transferred);
 
     boost::asio::io_service& io_;
     std::uint16_t port_;
