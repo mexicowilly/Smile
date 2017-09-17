@@ -101,9 +101,8 @@ void service::read_length_handler(std::shared_ptr<service> myself,
     }
 }
 
-void service::receive(std::uint32_t correlation_id,
-                      receipt_handler handler,
-                      std::chrono::milliseconds max_wait)
+std::unique_ptr<access_reply> service::receive(std::uint32_t correlation_id,
+                                               std::chrono::milliseconds max_wait)
 {
     raw_reply rp;
     std::unique_lock<std::mutex> lock(reply_guard_);
@@ -119,11 +118,13 @@ void service::receive(std::uint32_t correlation_id,
     else
     {
         rp.except = std::make_exception_ptr(std::runtime_error("Timeout waiting for reply " +
-                                                                   std::to_string(correlation_id)));
+                                                               std::to_string(correlation_id)));
     }
     lock.unlock();
+    if(rp.except)
+        std::rethrow_exception(rp.except);
     access_input_packet packet(*rp.bytes);
-    handler(packet, rp.except);
+    return std::move(packet_to_reply(packet));
 }
 
 void service::resolve_handler(std::shared_ptr<service> myself,

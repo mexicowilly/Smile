@@ -32,6 +32,8 @@ set(SMILE_PRIVATE_HEADERS
     access_output_packet.hpp
     access_reply.hpp
     access_request.hpp
+    auth_type.hpp
+    icu_exception.hpp
     input_packet.hpp
     literal.hpp
     output_packet.hpp
@@ -39,6 +41,9 @@ set(SMILE_PRIVATE_HEADERS
     request.hpp
     service.hpp
     service_port_map.hpp
+    signon_info_reply.hpp
+    signon_info_request.hpp
+    signon_service.hpp
     signon_text.hpp
     text_conversion.hpp)
 set(SMILE_SOURCES
@@ -46,11 +51,14 @@ set(SMILE_SOURCES
     access_output_packet.cpp
     access_request.cpp
     as400.cpp
+    icu_exception.cpp
     input_packet.cpp
     os400_version.cpp
     output_packet.cpp
     service.cpp
     service_port_map.cpp
+    signon_info_reply.cpp
+    signon_info_request.cpp
     signon_text.cpp
     text_conversion.cpp)
 

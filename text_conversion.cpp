@@ -1,4 +1,5 @@
 #include "text_conversion.hpp"
+#include "icu_exception.hpp"
 
 #include <unicode/ucnv.h>
 
@@ -23,7 +24,7 @@ converter::converter(std::uint16_t ccsid)
     UErrorCode uerr = U_ZERO_ERROR;
     cnv = ucnv_openCCSID(ccsid, UCNV_IBM, &uerr);
     if (U_FAILURE(uerr))
-        throw std::runtime_error(std::string("Error instantiating a codepage converter: ") + u_errorName(uerr));
+        throw smile::icu_exception("Error instantiating a codepage converter", uerr);
 }
 
 converter::~converter()
@@ -81,7 +82,7 @@ UnicodeString utf8_to_utf16(const std::string& str)
             if (uerr == U_BUFFER_OVERFLOW_ERROR)
                 buf.resize(ulen);
             else
-                throw std::runtime_error(std::string("Error converting from UTF-8 to UTF-16: ") + u_errorName(uerr));
+                throw icu_exception("Error converting from UTF-8 to UTF-16", uerr);
         }
     } while (uerr == U_BUFFER_OVERFLOW_ERROR);
     return UnicodeString(&buf[0], ulen);
@@ -100,7 +101,7 @@ std::string utf16_to_utf8(const UnicodeString& str)
                                        str.length(),
                                        &uerr);
     if (U_FAILURE(uerr))
-        throw std::runtime_error(std::string("Error converting from UTF-16 to UTF-8: ") + u_errorName(uerr));
+        throw icu_exception("Error converting from UTF-16 to UTF-8", uerr);
     result.resize(len);
     return result;
 }

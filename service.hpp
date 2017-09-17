@@ -2,8 +2,9 @@
 #define SMILE_SERVICE_HPP
 
 #include "service_port_map.hpp"
-#include "access_input_packet.hpp"
 #include "access_request.hpp"
+#include "access_reply.hpp"
+#include "access_input_packet.hpp"
 
 #include <boost/asio.hpp>
 #include <boost/signals2/signal.hpp>
@@ -28,8 +29,6 @@ namespace smile
 class service : public std::enable_shared_from_this<service>, public chucho::loggable<service>
 {
 public:
-    using receipt_handler = std::function<void(const access_input_packet&, std::exception_ptr)>;
-
     service(boost::asio::io_service& io,
             const std::string& system_name,
             service_port_map& port_map);
@@ -41,10 +40,12 @@ public:
                                                                           std::uint16_t port)> func);
     virtual const char* name() const = 0;
     virtual std::uint16_t id() const = 0;
-    void receive(std::uint32_t correlation_id,
-                 receipt_handler handler,
-                 std::chrono::milliseconds max_wait);
+    std::unique_ptr<access_reply> receive(std::uint32_t correlation_id,
+                                          std::chrono::milliseconds max_wait);
     void send(access_request& req);
+
+protected:
+    virtual std::unique_ptr<access_reply> packet_to_reply(const access_input_packet& packet) const = 0;
 
 private:
     struct raw_reply

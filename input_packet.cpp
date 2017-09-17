@@ -58,4 +58,22 @@ input_packet& input_packet::operator>> (std::vector<std::uint8_t>& bytes)
     return *this;
 }
 
+std::size_t input_packet::find(std::size_t start, std::uint16_t code) const
+{
+    for (std::size_t offset = start; offset < size(); offset += get<uint32_t>(offset))
+    {
+        if (get<std::uint16_t>(offset + 4) == code)
+            return offset;
+    }
+    return npos;
+}
+
+std::vector<std::uint8_t> input_packet::get(std::size_t offset, std::size_t length) const
+{
+    auto this_one = start_ + offset;
+    if (this_one > end_ - length)
+        throw std::out_of_range("Packet data request");
+    return std::vector<std::uint8_t>(this_one, this_one + length);
+}
+
 }

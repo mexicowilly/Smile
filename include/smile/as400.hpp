@@ -22,11 +22,6 @@ private:
         SHA1
     };
 
-    enum class auth_type
-    {
-        PASSWORD
-    };
-
     std::string system_name_;
     std::string user_id_;
     std::vector<std::uint8_t> auth_bytes_;

@@ -1,4 +1,5 @@
 #include "signon_text.hpp"
+#include "text_conversion.hpp"
 
 #include <map>
 #include <stdexcept>
@@ -116,7 +117,7 @@ namespace smile
 namespace signon_text
 {
 
-UnicodeString from_signon_ebcdic(const std::vector<std::uint8_t>& ebcdic)
+std::string from_signon_ebcdic_to_utf8(const std::vector<std::uint8_t> &ebcdic)
 {
     UnicodeString result;
     for (auto ch : ebcdic)
@@ -126,7 +127,7 @@ UnicodeString from_signon_ebcdic(const std::vector<std::uint8_t>& ebcdic)
             throw std::runtime_error("Invalid signon character");
         result += found->second;
     }
-    return result;
+    return text_conversion::utf16_to_utf8(result);
 }
 
 std::vector<std::uint8_t> to_signon_ebcdic(const UnicodeString& uni)
