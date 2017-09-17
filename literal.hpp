@@ -22,7 +22,7 @@
 namespace smile
 {
 
-constexpr std::uint16_t operator"" _u8(unsigned long long i)
+constexpr std::uint8_t operator"" _u8(unsigned long long i)
 {
     return static_cast<std::uint8_t>(i);
 }
