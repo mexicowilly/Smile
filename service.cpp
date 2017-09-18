@@ -17,22 +17,28 @@ service::service(boost::asio::io_service& io,
 {
 }
 
-void service::connect()
+void service::connect(std::chrono::milliseconds max_wait)
 {
     port_ = port_map_.port(name());
     boost::asio::ip::tcp::resolver resolver(io_);
     boost::asio::ip::tcp::resolver::query query(system_name_,
                                                 std::to_string(port_));
+    auto prom = std::make_shared<std::promise<void>>();
+    auto fut = prom->get_future();
     CHUCHO_DEBUG_LGBL("Starting connection " << system_name_ << ':' << port_ << ' ' << name());
     resolver.async_resolve(query,
                            std::bind(&service::resolve_handler,
                                      this,
                                      shared_from_this(),
+                                     prom,
                                      std::placeholders::_1,
                                      std::placeholders::_2));
+    if(fut.wait_for(max_wait) == std::future_status::timeout)
+        CHUCHO_ERROR_LGBL("Timed out waiting for the connection to finish");
 }
 
 void service::connect_handler(std::shared_ptr<service> myself,
+                              std::shared_ptr<std::promise<void>> prom,
                               const boost::system::error_code& ec)
 {
     if (ec)
@@ -46,6 +52,7 @@ void service::connect_handler(std::shared_ptr<service> myself,
             ':' << port_ << ' ' << name());
         connect_sig_(system_name_, name(), port_);
     }
+    prom->set_value();
 }
 
 void service::read_data_handler(std::shared_ptr<service> myself,
@@ -67,7 +74,7 @@ void service::read_data_handler(std::shared_ptr<service> myself,
     }
     std::lock_guard<std::mutex> lock(reply_guard_);
     replies_[correlation_id] = rp;
-    reply_added_.notify_one();
+    reply_cond_.notify_one();
 }
 
 void service::read_length_handler(std::shared_ptr<service> myself,
@@ -82,7 +89,7 @@ void service::read_length_handler(std::shared_ptr<service> myself,
         rp.except = std::make_exception_ptr(std::runtime_error("Error reading packet length: " + ec.message()));
         std::lock_guard<std::mutex> lock(reply_guard_);
         replies_[correlation_id] = rp;
-        reply_added_.notify_one();
+        reply_cond_.notify_one();
     }
     else
     {
@@ -106,7 +113,7 @@ std::unique_ptr<access_reply> service::receive(std::uint32_t correlation_id,
 {
     raw_reply rp;
     std::unique_lock<std::mutex> lock(reply_guard_);
-    if(reply_added_.wait_for(lock,
+    if(reply_cond_.wait_for(lock,
                              max_wait,
                              [&]() { return replies_.find(correlation_id) != replies_.end(); }))
     {
@@ -128,6 +135,7 @@ std::unique_ptr<access_reply> service::receive(std::uint32_t correlation_id,
 }
 
 void service::resolve_handler(std::shared_ptr<service> myself,
+                              std::shared_ptr<std::promise<void>> prom,
                               const boost::system::error_code& ec,
                               boost::asio::ip::tcp::resolver::iterator itor)
 {
@@ -143,6 +151,7 @@ void service::resolve_handler(std::shared_ptr<service> myself,
                                    std::bind(&service::connect_handler,
                                              this,
                                              myself,
+                                             prom,
                                              std::placeholders::_1));
     }
 }
@@ -176,7 +185,7 @@ void service::send_handler(std::shared_ptr<service> myself,
         rp.except = std::make_exception_ptr(std::runtime_error("Error sending: " + ec.message()));
         std::lock_guard<std::mutex> lock(reply_guard_);
         replies_[correlation_id] = rp;
-        reply_added_.notify_one();
+        reply_cond_.notify_one();
     }
     else
     {

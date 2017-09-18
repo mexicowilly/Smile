@@ -34,7 +34,7 @@ public:
             const std::string& system_name,
             service_port_map& port_map);
 
-    void connect();
+    void connect(std::chrono::milliseconds max_wait);
 
     boost::signals2::connection connect_to_connect_sig(std::function<void(const std::string& system_name,
                                                                           const char* const service_name,
@@ -57,8 +57,10 @@ private:
     };
 
     void connect_handler(std::shared_ptr<service> myself,
+                         std::shared_ptr<std::promise<void>> prom,
                          const boost::system::error_code& ec);
     void resolve_handler(std::shared_ptr<service> myself,
+                         std::shared_ptr<std::promise<void>> prom,
                          const boost::system::error_code& ec,
                          boost::asio::ip::tcp::resolver::iterator itor);
     void read_data_handler(std::shared_ptr<service> myself,
@@ -94,7 +96,7 @@ private:
                                  std::uint16_t port)> connect_sig_;
     std::map<std::uint32_t, raw_reply> replies_;
     std::mutex reply_guard_;
-    std::condition_variable reply_added_;
+    std::condition_variable reply_cond_;
 };
 
 inline boost::signals2::connection service::connect_to_connect_sig(std::function<void(const std::string&,

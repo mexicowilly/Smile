@@ -1,9 +1,15 @@
 #ifndef SMILE_AS400_HPP
 #define SMILE_AS400_HPP
 
+#include "os400_version.hpp"
+
+#include <boost/asio.hpp>
+
 #include <string>
 #include <vector>
 #include <memory>
+#include <chrono>
+#include <thread>
 
 namespace smile
 {
@@ -13,24 +19,31 @@ class credential_store;
 class as400
 {
 public:
-    as400(const std::string& system_name,
+    using clock = std::chrono::system_clock;
+
+    as400(std::size_t io_threads,
+          const std::string& system_name,
           const std::string& user_id,
           const std::string& password);
     as400(const as400&) = delete;
+    virtual ~as400();
 
     as400& operator= (const as400&) = delete;
 
 private:
-    enum class password_encryption
-    {
-        UNKNOWN,
-        DES,
-        SHA1
-    };
-
+    boost::asio::io_service io_;
+    std::unique_ptr<boost::asio::io_service::work> work_;
+    std::vector<std::thread> threads_;
     std::string system_name_;
     std::string user_id_;
     std::unique_ptr<credential_store> cred_store_;
+    int password_encryption_type_;
+    int auth_type_;
+    clock::time_point current_signon_time_;
+    clock::time_point last_signon_time_;
+    clock::time_point expiration_time_;
+    std::uint16_t ccsid_;
+    os400_version version_;
 };
 
 }

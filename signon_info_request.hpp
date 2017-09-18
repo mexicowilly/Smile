@@ -2,7 +2,7 @@
 #define SMILE_SIGNON_INFO_REQUEST_HPP
 
 #include "access_request.hpp"
-#include "auth_type.hpp"
+#include "enum_types.hpp"
 
 namespace smile
 {
