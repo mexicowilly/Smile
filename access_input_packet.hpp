@@ -13,6 +13,7 @@ public:
 
     std::uint32_t correlation_id() const;
     std::uint16_t request_reply_id() const;
+    std::uint32_t return_code() const;
     std::uint16_t template_length() const;
 };
 
@@ -24,6 +25,11 @@ inline std::uint32_t access_input_packet::correlation_id() const
 inline std::uint16_t access_input_packet::request_reply_id() const
 {
     return get<std::uint16_t>(18);
+}
+
+inline std::uint32_t access_input_packet::return_code() const
+{
+    return get<std::uint32_t>(20);
 }
 
 inline std::uint16_t access_input_packet::template_length() const

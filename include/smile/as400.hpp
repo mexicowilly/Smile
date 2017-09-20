@@ -8,13 +8,13 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <chrono>
 #include <thread>
 
 namespace smile
 {
 
 class credential_store;
+class service_port_map;
 
 class as400
 {
@@ -39,11 +39,12 @@ private:
     std::unique_ptr<credential_store> cred_store_;
     int password_encryption_type_;
     int auth_type_;
-    clock::time_point current_signon_time_;
-    clock::time_point last_signon_time_;
-    clock::time_point expiration_time_;
     std::uint16_t ccsid_;
     os400_version version_;
+    std::uint16_t server_level_;
+    std::unique_ptr<service_port_map> service_port_map_;
+    std::array<std::uint8_t, 8> client_seed_;
+    std::array<std::uint8_t, 8> server_seed_;
 };
 
 }

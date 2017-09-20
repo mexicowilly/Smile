@@ -156,7 +156,7 @@ void service::resolve_handler(std::shared_ptr<service> myself,
     }
 }
 
-void service::send(access_request& req)
+std::uint32_t service::send(access_request& req)
 {
     auto corr = correlation_++;
     req.set_correlation_id(corr);
@@ -171,6 +171,7 @@ void service::send(access_request& req)
                                        corr,
                                        std::placeholders::_1,
                                        std::placeholders::_2));
+    return corr;
 }
 
 void service::send_handler(std::shared_ptr<service> myself,

@@ -3,12 +3,15 @@
 
 #include "access_request.hpp"
 
+#include <boost/optional.hpp>
+
 namespace smile
 {
 
 class signon_exchange_attributes_request : public access_request
 {
-    signon_exchange_attributes_request(const std::vector<std::uint8_t>& seed);
+public:
+    signon_exchange_attributes_request(const boost::optional<std::array<std::uint8_t, 8>>& seed);
 };
 
 }

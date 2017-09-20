@@ -43,7 +43,7 @@ public:
     virtual const char* name() const = 0;
     std::unique_ptr<access_reply> receive(std::uint32_t correlation_id,
                                           std::chrono::milliseconds max_wait);
-    void send(access_request& req);
+    std::uint32_t send(access_request& req);
     void send_no_reply(access_request& req, std::chrono::milliseconds max_wait);
 
 protected:
