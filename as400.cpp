@@ -8,6 +8,10 @@
 
 #include <openssl/rand.h>
 
+#include <chrono>
+
+using namespace std::chrono_literals;
+
 namespace smile
 {
 
@@ -29,13 +33,13 @@ as400::as400(std::size_t io_threads,
     while (client_seed_[0] >= 0xe8)
         RAND_bytes(client_seed_.data(), 1);
     signon_service svc(io_, system_name, *service_port_map_);
-    svc.connect(std::chrono::milliseconds(1000));
+    svc.connect(1000ms);
     boost::optional<std::array<std::uint8_t, 8>> seed;
     if (auth_type_ == +auth_type::PASSWORD)
         seed = client_seed_;
     signon_exchange_attributes_request req(seed);
     auto correlation = svc.send(req);
-    auto rep = cast_reply<signon_exchange_attributes_reply>(svc.receive(correlation, std::chrono::milliseconds(1000)));
+    auto rep = cast_reply<signon_exchange_attributes_reply>(svc.receive(correlation, 1000ms));
     version_ = rep->version();
     server_level_ = rep->server_level();
     password_encryption_type_ = +rep->password_encryption();

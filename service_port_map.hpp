@@ -2,9 +2,9 @@
 #define SMILE_SERVICE_PORT_MAP_HPP
 
 #include <boost/asio.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 #include <map>
-#include <pthread.h>
 
 namespace smile
 {
@@ -19,8 +19,7 @@ public:
 private:
     boost::asio::io_service io_;
     std::map<std::string, std::uint16_t> map_;
-    // boost::shared_mutex only available with C++17
-    pthread_rwlock_t guard_;
+    boost::shared_mutex guard_;
     std::string host_name_;
 };
 

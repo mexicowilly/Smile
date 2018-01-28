@@ -1,12 +1,14 @@
 #include "text_conversion.hpp"
 #include "icu_exception.hpp"
+#include "garbage_cleaner.hpp"
 
 #include <unicode/ucnv.h>
+#include <boost/thread/shared_mutex.hpp>
 
 #include <map>
 #include <memory>
 #include <vector>
-#include <stdexcept>
+#include <mutex>
 
 namespace
 {
@@ -32,25 +34,44 @@ converter::~converter()
     ucnv_close(cnv);
 }
 
-std::map<std::uint16_t, std::unique_ptr<converter>> converters;
-pthread_rwlock_t converters_guard = PTHREAD_RWLOCK_INITIALIZER;
+struct static_data
+{
+    static_data()
+    {
+        smile::garbage_cleaner::get().add([this] () { delete this; });
+    }
+
+    std::map<std::uint16_t, std::unique_ptr<converter>> converters;
+    boost::shared_mutex guard;
+};
+
+static_data& statics()
+{
+    static std::once_flag once;
+    static static_data* sd;
+
+    std::call_once(once, [&] () { sd = new static_data(); });
+    return *sd;
+}
 
 converter& get_converter(std::uint16_t ccsid)
 {
     converter* result;
-    pthread_rwlock_rdlock(&converters_guard);
-    auto found = converters.find(ccsid);
-    if (found == converters.end())
+    auto& sd = statics();
+    sd.guard.lock_shared();
+    auto found = sd.converters.find(ccsid);
+    if (found == sd.converters.end())
     {
-        pthread_rwlock_unlock(&converters_guard);
-        pthread_rwlock_wrlock(&converters_guard);
-        result = (converters[ccsid] = std::unique_ptr<converter>(new converter(ccsid))).get();
+        sd.guard.unlock();
+        sd.guard.lock();
+        auto p = sd.converters.emplace(ccsid, std::make_unique<converter>(ccsid));
+        result = p.first->second.get();
     }
     else
     {
         result = found->second.get();
     }
-    pthread_rwlock_unlock(&converters_guard);
+    sd.guard.unlock();
     return *result;
 }
 

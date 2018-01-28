@@ -26,6 +26,7 @@ include_directories(include
 
 set(SMILE_PUBLIC_HEADERS
     include/smile/as400.hpp
+    include/smile/finalize.hpp
     include/smile/os400_version.hpp)
 set(SMILE_PRIVATE_HEADERS
     access_input_packet.hpp
@@ -36,6 +37,7 @@ set(SMILE_PRIVATE_HEADERS
     enum_types.hpp
     credential_store.hpp
     end_signon_service_request.hpp
+    garbage_cleaner.hpp
     icu_exception.hpp
     input_packet.hpp
     literal.hpp
@@ -58,6 +60,8 @@ set(SMILE_SOURCES
     as400.cpp
     credential_store.cpp
     demangle.cpp
+    finalize.cpp
+    garbage_cleaner.cpp
     icu_exception.cpp
     input_packet.cpp
     os400_version.cpp

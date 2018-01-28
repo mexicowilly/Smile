@@ -8,24 +8,23 @@ namespace smile
 {
 
 service_port_map::service_port_map(const std::string& host_name)
-    : guard_(PTHREAD_RWLOCK_INITIALIZER),
-      host_name_(host_name)
+    : host_name_(host_name)
 {
 }
 
 std::uint16_t service_port_map::port(const char* const service_name)
 {
     std::uint16_t result;
-    pthread_rwlock_rdlock(&guard_);
+    guard_.lock_shared();
     auto found = map_.find(service_name);
     if (found != map_.end())
     {
         result = found->second;
-        pthread_rwlock_unlock(&guard_);
+        guard_.unlock();
     }
     else
     {
-        pthread_rwlock_unlock(&guard_);
+        guard_.unlock();
         boost::asio::ip::tcp::resolver resolver(io_);
         boost::asio::ip::tcp::resolver::query query(host_name_, std::to_string(449));
         auto itor = resolver.resolve(query);
@@ -39,9 +38,9 @@ std::uint16_t service_port_map::port(const char* const service_name)
         std::uint32_t p;
         boost::asio::read(sock, boost::asio::buffer(&p, sizeof(p)));
         boost::endian::big_to_native_inplace(p);
-        pthread_rwlock_wrlock(&guard_);
-        map_[service_name] = p;
-        pthread_rwlock_unlock(&guard_);
+        guard_.lock();
+        map_[service_name] = static_cast<std::uint16_t>(p);
+        guard_.unlock();
         result = p;
     }
     return result;

@@ -33,6 +33,7 @@ public:
     service(boost::asio::io_service& io,
             const std::string& system_name,
             service_port_map& port_map);
+    virtual ~service() { }
 
     void connect(std::chrono::milliseconds max_wait);
 
