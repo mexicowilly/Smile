@@ -19,7 +19,7 @@ public:
 private:
     boost::asio::io_service io_;
     std::map<std::string, std::uint16_t> map_;
-    // boost::shared_mutex only available with C++14
+    // boost::shared_mutex only available with C++17
     pthread_rwlock_t guard_;
     std::string host_name_;
 };
