@@ -56,7 +56,7 @@ std::unique_ptr<access_reply> signon_service::packet_to_reply(const access_input
             assert(false);
             break;
         case 0xf004:
-            result.reset(new signon_info_reply(packet));
+            result = std::make_unique<signon_info_reply>(packet);
             break;
         case 0xf005:
             // Change password

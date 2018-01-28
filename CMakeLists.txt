@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 project(smile)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -32,7 +32,8 @@ set(SMILE_PRIVATE_HEADERS
     access_output_packet.hpp
     access_reply.hpp
     access_request.hpp
-        enum_types.hpp
+    demangle.hpp
+    enum_types.hpp
     credential_store.hpp
     end_signon_service_request.hpp
     icu_exception.hpp
@@ -56,6 +57,7 @@ set(SMILE_SOURCES
     access_request.cpp
     as400.cpp
     credential_store.cpp
+    demangle.cpp
     icu_exception.cpp
     input_packet.cpp
     os400_version.cpp

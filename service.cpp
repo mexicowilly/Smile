@@ -1,8 +1,7 @@
 #include "service.hpp"
+#include "demangle.hpp"
 
 #include <chucho/log.hpp>
-
-#include <boost/endian/conversion.hpp>
 
 namespace smile
 {
@@ -71,6 +70,7 @@ void service::read_data_handler(std::shared_ptr<service> myself,
         buf->insert(buf->begin(), sizeof(std::uint32_t));
         *reinterpret_cast<std::uint32_t*>(&buf->at(0)) = boost::endian::native_to_big(buf->size());
         rp.bytes = buf;
+        CHUCHO_DEBUG_LGBL("Read message of " << buf->size() << " bytes");
     }
     std::lock_guard<std::mutex> lock(reply_guard_);
     replies_[correlation_id] = rp;
@@ -96,6 +96,7 @@ void service::read_length_handler(std::shared_ptr<service> myself,
         auto buf_len = boost::endian::big_to_native(*reinterpret_cast<std::uint32_t*>(buf->begin())) -
             sizeof(std::uint32_t);
         auto dbuf = std::make_shared<std::vector<std::uint8_t>>(buf_len);
+        CHUCHO_DEBUG_LGBL("About to read message of " << buf_len << " bytes");
         boost::asio::async_read(sock_,
                                 boost::asio::buffer(*buf),
                                 std::bind(&service::read_data_handler,
@@ -131,7 +132,9 @@ std::unique_ptr<access_reply> service::receive(std::uint32_t correlation_id,
     if(rp.except)
         std::rethrow_exception(rp.except);
     access_input_packet packet(*rp.bytes);
-    return std::move(packet_to_reply(packet));
+    auto r = packet_to_reply(packet);
+    CHUCHO_DEBUG_LGBL("Created a " << demangle::demangled_name(typeid(decltype(*r))));
+    return std::move(r);
 }
 
 void service::resolve_handler(std::shared_ptr<service> myself,
@@ -146,6 +149,7 @@ void service::resolve_handler(std::shared_ptr<service> myself,
     }
     else
     {
+        CHUCHO_DEBUG_LGBL("Resolved address of " << system_name_);
         boost::asio::async_connect(sock_,
                                    itor,
                                    std::bind(&service::connect_handler,
@@ -190,6 +194,7 @@ void service::send_handler(std::shared_ptr<service> myself,
     }
     else
     {
+        CHUCHO_DEBUG_LGBL("Sent message of " << data->size() << " bytes");
         auto buf = std::make_shared<std::array<std::uint8_t, sizeof(std::uint32_t)>>();
         boost::asio::async_read(sock_,
                                 boost::asio::buffer(*buf),
