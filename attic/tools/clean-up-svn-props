@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# This assumes that all files in the tree that are controlled by
+# svn are text files.
+EOL_STYLE="native"
+for FILE in `find . -name ".svn" -prune -o ! -name configure -print`
+do
+    if ! test -d "${FILE}" &&
+       test "`svn st ${FILE} | awk '{ print $1 }'`" != "?" &&
+       test "`svn pg svn:eol-style ${FILE}`" != "${EOL_STYLE}" ; then
+        svn ps svn:eol-style ${EOL_STYLE} ${FILE}
+    fi
+done

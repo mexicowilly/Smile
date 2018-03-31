@@ -1,0 +1,1 @@
+srcdir="@abs_top_srcdir@/test" "@abs_top_builddir@/libtool" --mode=execute "@DEBUGGER@" "@abs_top_builddir@/test/smile-test"

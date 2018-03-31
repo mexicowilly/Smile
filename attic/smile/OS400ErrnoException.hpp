@@ -1,0 +1,196 @@
+#if !defined(SMILE_OS400ERRNOEXCEPTION_HPP__)
+#define SMILE_OS400ERRNOEXCEPTION_HPP__
+
+#include <smile/ErrnoException.hpp>
+
+namespace smile
+{
+
+class OS400ErrnoException : public ErrnoException
+{
+public:
+    enum Errno
+    {
+        Errno_EDOM                  = 3001,
+        Errno_ERANGE                = 3002,
+        Errno_ETRUNC                = 3003,
+        Errno_ENOTOPEN              = 3004,
+        Errno_ENOTREAD              = 3005,
+        Errno_EIO                   = 3006,
+        Errno_ENODEV                = 3007,
+        Errno_ERECIO                = 3008,
+        Errno_ENOTWRITE             = 3009,
+        Errno_ESTDIN                = 3010,
+        Errno_ESTDOUT               = 3011,
+        Errno_ESTDERR               = 3012,
+        Errno_EBADSEEK              = 3013,
+        Errno_EBADNAME              = 3014,
+        Errno_EBADMODE              = 3015,
+        Errno_EBADPOS               = 3017,
+        Errno_ENOPOS                = 3018,
+        Errno_ENUMMBRS              = 3019,
+        Errno_ENUMRECS              = 3020,
+        Errno_EINVAL                = 3021,
+        Errno_EBADFUNC              = 3022,
+        Errno_ENOENT                = 3025,
+        Errno_ENOREC                = 3026,
+        Errno_EPERM                 = 3027,
+        Errno_EBADDATA              = 3028,
+        Errno_EBUSY                 = 3029,
+        Errno_EBADOPT               = 3040,
+        Errno_ENOTUPD               = 3041,
+        Errno_ENOTDLT               = 3042,
+        Errno_EPAD                  = 3043,
+        Errno_EBADKEYLN             = 3044,
+        Errno_EPUTANDGET            = 3080,
+        Errno_EGETANDPUT            = 3081,
+        Errno_EIOERROR              = 3101,
+        Errno_EIORECERR             = 3102,
+        Errno_EACCESS               = 3401,
+        Errno_ENOTDIR               = 3403,
+        Errno_ENOSPC                = 3404,
+        Errno_EXDEV                 = 3405,
+        Errno_EAGAIN_OR_WOULDBLOCK  = 3406,
+        Errno_EINTR                 = 3407,
+        Errno_EFAULT                = 3408,
+        Errno_ETIME                 = 3409,
+        Errno_ENXIO                 = 3415,
+        Errno_EAPAR                 = 3418,
+        Errno_ERECURSE              = 3419,
+        Errno_EADDRINUSE            = 3420,
+        Errno_EADDRNOTAVAIL         = 3421,
+        Errno_EAFNOSUPPORT          = 3422,
+        Errno_EALREADY              = 3423,
+        Errno_ECONNABORTED          = 3424,
+        Errno_ECONNREFUSED          = 3425,
+        Errno_ECONNRESET            = 3426,
+        Errno_EDESTADDRREQ          = 3427,
+        Errno_EHOSTDOWN             = 3428,
+        Errno_EHOSTUNREACH          = 3429,
+        Errno_EINPROGRESS           = 3430,
+        Errno_EISCONN               = 3431,
+        Errno_EMSGSIZE              = 3432,
+        Errno_ENETDOWN              = 3433,
+        Errno_ENETRESET             = 3434,
+        Errno_ENETUNREACH           = 3435,
+        Errno_ENOBUFS               = 3436,
+        Errno_ENOPROTOOPT           = 3437,
+        Errno_ENOTCONN              = 3438,
+        Errno_ENOTSOCK              = 3439,
+        Errno_ENOTSUP               = 3440,
+        Errno_EPFNOSUPPORT          = 3441,
+        Errno_EPROTONOSUPPORT       = 3442,
+        Errno_EPROTOTYPE            = 3443,
+        Errno_ERCVDERR              = 3444,
+        Errno_ESHUTDOWN             = 3445,
+        Errno_ESOCKTNOSUPPORT       = 3446,
+        Errno_ETIMEDOUT             = 3447,
+        Errno_EUNATCH               = 3448,
+        Errno_EBADF                 = 3450,
+        Errno_EMFILE                = 3452,
+        Errno_ENFILE                = 3453,
+        Errno_EPIPE                 = 3455,
+        Errno_ECANCEL               = 3456,
+        Errno_EEXIST                = 3457,
+        Errno_EDEADLK               = 3459,
+        Errno_ENOMEM                = 3460,
+        Errno_EOWNERTERM            = 3462,
+        Errno_EDESTROYED            = 3463,
+        Errno_ETERM                 = 3464,
+        Errno_ENOENT1               = 3465,
+        Errno_ENOEQFLOG             = 3466,
+        Errno_EEMPTYDIR             = 3467,
+        Errno_EMLINK                = 3468,
+        Errno_ESPIPE                = 3469,
+        Errno_ENOSYS                = 3470,
+        Errno_EISDIR                = 3471,
+        Errno_EROFS                 = 3472,
+        Errno_EUNKNOWN              = 3474,
+        Errno_EITERBAD              = 3475,
+        Errno_EITERSTE              = 3476,
+        Errno_EHRICLSBAD            = 3477,
+        Errno_EHRICLBAD             = 3478,
+        Errno_EHRITYPBAD            = 3479,
+        Errno_ENOTAPPL              = 3480,
+        Errno_EHRIREQTYP            = 3481,
+        Errno_EHRINAMEBAD           = 3482,
+        Errno_EDAMAGE               = 3484,
+        Errno_ELOOP                 = 3485,
+        Errno_ENAMETOOLONG          = 3486,
+        Errno_ENOLCK                = 3487,
+        Errno_ENOTEMPTY             = 3488,
+        Errno_ENOSYSRSC             = 3489,
+        Errno_ECONVERT              = 3490,
+        Errno_E2BIG                 = 3491,
+        Errno_EILSEQ                = 3492,
+        Errno_ETYPE                 = 3493,
+        Errno_EBADDIR               = 3494,
+        Errno_EBADOBJ               = 3495,
+        Errno_EIDXINVAL             = 3496,
+        Errno_ESOFTDAMAGE           = 3497,
+        Errno_ENOTENROLL            = 3498,
+        Errno_EOFFLINE              = 3499,
+        Errno_EROOBJ                = 3500,
+        Errno_EEAHDDSI              = 3501,
+        Errno_EEASDDSI              = 3502,
+        Errno_EEAHDDS               = 3503,
+        Errno_EEASDDS               = 3504,
+        Errno_EEADUPRC              = 3505,
+        Errno_ELOCKED               = 3506,
+        Errno_EFBIG                 = 3507,
+        Errno_EIDRM                 = 3509,
+        Errno_ENOMSG                = 3510,
+        Errno_EFILECVT              = 3511,
+        Errno_EBADFID               = 3512,
+        Errno_ESTALE                = 3513,
+        Errno_ESRCH                 = 3515,
+        Errno_ENOTSIGINIT           = 3516,
+        Errno_ECHILD                = 3517,
+        Errno_EBADH                 = 3520,
+        Errno_ETOOMANYREFS          = 3523,
+        Errno_ENOTSAFE              = 3524,
+        Errno_EOVERFLOW             = 3525,
+        Errno_EJRNDAMAGE            = 3526,
+        Errno_EJRNINACTIVE          = 3527,
+        Errno_EJRNRCVSPC            = 3528,
+        Errno_EJRNRMT               = 3529,
+        Errno_ENEWJRNRCV            = 3530,
+        Errno_ENEWJRN               = 3531,
+        Errno_EJOURNALED            = 3532,
+        Errno_EJRNENTTOOLONG        = 3533,
+        Errno_EDATALINK             = 3534,
+        Errno_ENOTAVAIL             = 3535,
+        Errno_ENOTTY                = 3536,
+        Errno_EFBIG2                = 3540,
+        Errno_ETXTBSY               = 3543,
+        Errno_EASPGRPNOTSET         = 3544,
+        Errno_ERESTART              = 3545,
+        Errno_ESCANFAILURE          = 3546,
+        Errno_ESMILEUNKNOWN         = -1
+    };
+
+    static Errno convertErrno(int rawErrno);
+
+    OS400ErrnoException(const char* const fileName,
+                        int lineNumber,
+                        const char* const msg,
+                        int err);
+    OS400ErrnoException(const OS400ErrnoException& except);
+
+    OS400ErrnoException& operator= (const OS400ErrnoException& except);
+
+    virtual Exception* duplicate() const;
+    Errno getErrnoCode() const;
+
+private:
+    const char* getErrnoMessage(Errno err) const;
+};
+
+inline OS400ErrnoException::Errno OS400ErrnoException::getErrnoCode() const
+{
+    return convertErrno(getErrno());
+}
+
+}
+
+#endif

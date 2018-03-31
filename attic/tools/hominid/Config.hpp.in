@@ -1,0 +1,7 @@
+#if !defined(HOMINID_CONFIG_HPP__)
+#define HOMINID_CONFIG_HPP__
+
+#undef HOMINID_GCC_DEMANGLING
+#undef HOMINID_CXA_NAMESPACE
+
+#endif

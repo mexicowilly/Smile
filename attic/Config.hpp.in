@@ -1,0 +1,230 @@
+/* Config.hpp
+.in.  Generated from configure.ac by autoheader.  */
+
+/* Define if building universal (internal helper macro) */
+#undef AC_APPLE_UNIVERSAL_BUILD
+
+/* Define to 1 if you have the `BIO_new_connect' function. */
+#undef HAVE_BIO_NEW_CONNECT
+
+/* Define to 1 if you have the `BIO_read' function. */
+#undef HAVE_BIO_READ
+
+/* Define to 1 if you have the `BIO_write' function. */
+#undef HAVE_BIO_WRITE
+
+/* Define to 1 if you have the <cxxabi.h> header file. */
+#undef HAVE_CXXABI_H
+
+/* Define to 1 if you have the declaration of `BIO_do_connect', and to 0 if
+   you don't. */
+#undef HAVE_DECL_BIO_DO_CONNECT
+
+/* Define to 1 if you have the declaration of `BIO_get_fd', and to 0 if you
+   don't. */
+#undef HAVE_DECL_BIO_GET_FD
+
+/* Define to 1 if you have the declaration of `BIO_get_ssl', and to 0 if you
+   don't. */
+#undef HAVE_DECL_BIO_GET_SSL
+
+/* Define to 1 if you have the declaration of `BIO_set_conn_hostname', and to
+   0 if you don't. */
+#undef HAVE_DECL_BIO_SET_CONN_HOSTNAME
+
+/* Define to 1 if you have the declaration of `EVP_CIPHER_block_size', and to
+   0 if you don't. */
+#undef HAVE_DECL_EVP_CIPHER_BLOCK_SIZE
+
+/* Define to 1 if you have the declaration of `EVP_CIPHER_key_length', and to
+   0 if you don't. */
+#undef HAVE_DECL_EVP_CIPHER_KEY_LENGTH
+
+/* Define to 1 if you have the declaration of `OpenSSL_add_all_algorithms',
+   and to 0 if you don't. */
+#undef HAVE_DECL_OPENSSL_ADD_ALL_ALGORITHMS
+
+/* Define to 1 if you have the declaration of `SSL_set_mode', and to 0 if you
+   don't. */
+#undef HAVE_DECL_SSL_SET_MODE
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if you have the `ERR_error_string' function. */
+#undef HAVE_ERR_ERROR_STRING
+
+/* Define to 1 if you have the `ERR_get_error' function. */
+#undef HAVE_ERR_GET_ERROR
+
+/* Define to 1 if you have the `ERR_load_BIO_strings' function. */
+#undef HAVE_ERR_LOAD_BIO_STRINGS
+
+/* Define to 1 if you have the `EVP_bf_ecb' function. */
+#undef HAVE_EVP_BF_ECB
+
+/* Define to 1 if you have the `EVP_CIPHER_CTX_cleanup' function. */
+#undef HAVE_EVP_CIPHER_CTX_CLEANUP
+
+/* Define to 1 if you have the `EVP_CIPHER_CTX_init' function. */
+#undef HAVE_EVP_CIPHER_CTX_INIT
+
+/* Define to 1 if you have the `EVP_CIPHER_CTX_set_padding' function. */
+#undef HAVE_EVP_CIPHER_CTX_SET_PADDING
+
+/* Define to 1 if you have the `EVP_des_ecb' function. */
+#undef HAVE_EVP_DES_ECB
+
+/* Define to 1 if you have the `EVP_DigestFinal' function. */
+#undef HAVE_EVP_DIGESTFINAL
+
+/* Define to 1 if you have the `EVP_DigestInit' function. */
+#undef HAVE_EVP_DIGESTINIT
+
+/* Define to 1 if you have the `EVP_DigestUpdate' function. */
+#undef HAVE_EVP_DIGESTUPDATE
+
+/* Define to 1 if you have the `EVP_EncryptFinal_ex' function. */
+#undef HAVE_EVP_ENCRYPTFINAL_EX
+
+/* Define to 1 if you have the `EVP_EncryptInit_ex' function. */
+#undef HAVE_EVP_ENCRYPTINIT_EX
+
+/* Define to 1 if you have the `EVP_EncryptUpdate' function. */
+#undef HAVE_EVP_ENCRYPTUPDATE
+
+/* Define to 1 if you have the `EVP_MD_CTX_cleanup' function. */
+#undef HAVE_EVP_MD_CTX_CLEANUP
+
+/* Define to 1 if you have the `EVP_sha1' function. */
+#undef HAVE_EVP_SHA1
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `RAND_bytes' function. */
+#undef HAVE_RAND_BYTES
+
+/* Define to 1 if you have the `SSLv23_client_method' function. */
+#undef HAVE_SSLV23_CLIENT_METHOD
+
+/* Define to 1 if you have the `SSL_CTX_free' function. */
+#undef HAVE_SSL_CTX_FREE
+
+/* Define to 1 if you have the `SSL_CTX_new' function. */
+#undef HAVE_SSL_CTX_NEW
+
+/* Define to 1 if you have the `SSL_load_error_strings' function. */
+#undef HAVE_SSL_LOAD_ERROR_STRINGS
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unicode/ucal.h> header file. */
+#undef HAVE_UNICODE_UCAL_H
+
+/* Define to 1 if you have the <unicode/uchar.h> header file. */
+#undef HAVE_UNICODE_UCHAR_H
+
+/* Define to 1 if you have the <unicode/ucnv.h> header file. */
+#undef HAVE_UNICODE_UCNV_H
+
+/* Define to 1 if you have the <unicode/udat.h> header file. */
+#undef HAVE_UNICODE_UDAT_H
+
+/* Define to 1 if you have the <unicode/uloc.h> header file. */
+#undef HAVE_UNICODE_ULOC_H
+
+/* Define to 1 if you have the <unicode/uregex.h> header file. */
+#undef HAVE_UNICODE_UREGEX_H
+
+/* Define to 1 if you have the <unicode/urename.h> header file. */
+#undef HAVE_UNICODE_URENAME_H
+
+/* Define to 1 if you have the <unicode/ustdio.h> header file. */
+#undef HAVE_UNICODE_USTDIO_H
+
+/* Define to 1 if you have the <unicode/ustring.h> header file. */
+#undef HAVE_UNICODE_USTRING_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* namespace for cxa */
+#undef HOMINID_CXA_NAMESPACE
+
+/* gcc style demangling */
+#undef HOMINID_GCC_DEMANGLING
+
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* big endian */
+#undef SMILE_BIG_ENDIAN
+
+/* namespace for cxa */
+#undef SMILE_CXA_NAMESPACE
+
+/* gcc style demangling */
+#undef SMILE_GCC_DEMANGLING
+
+/* the name of this operating system */
+#undef SMILE_OS
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Version number of package */
+#undef VERSION
+
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
