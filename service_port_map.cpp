@@ -41,7 +41,7 @@ std::uint16_t service_port_map::port(const char* const service_name)
         guard_.lock();
         map_[service_name] = static_cast<std::uint16_t>(p);
         guard_.unlock();
-        result = p;
+        result = static_cast<std::uint16_t>(p);
     }
     return result;
 }

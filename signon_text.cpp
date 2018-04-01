@@ -117,7 +117,7 @@ namespace smile
 namespace signon_text
 {
 
-std::string from_signon_ebcdic_to_utf8(const std::vector<std::uint8_t> &ebcdic)
+std::string from_signon_ebcdic_to_utf8(const std::vector<std::uint8_t>& ebcdic)
 {
     UnicodeString result;
     for (auto ch : ebcdic)

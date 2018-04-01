@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <type_traits>
 #include <stdexcept>
+#include <vector>
 
 namespace smile
 {

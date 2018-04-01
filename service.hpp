@@ -98,6 +98,7 @@ private:
     std::map<std::uint32_t, raw_reply> replies_;
     std::mutex reply_guard_;
     std::condition_variable reply_cond_;
+    std::atomic<bool> stop_;
 };
 
 inline boost::signals2::connection service::connect_to_connect_sig(std::function<void(const std::string&,

@@ -12,7 +12,8 @@ service::service(boost::asio::io_service& io,
     : io_(io),
       port_map_(port_map),
       system_name_(system_name),
-      sock_(io)
+      sock_(io),
+      stop_(false)
 {
 }
 
@@ -33,7 +34,11 @@ void service::connect(std::chrono::milliseconds max_wait)
                                      std::placeholders::_1,
                                      std::placeholders::_2));
     if(fut.wait_for(max_wait) == std::future_status::timeout)
-        CHUCHO_ERROR_LGBL("Timed out waiting for the connection to finish");
+    {
+        stop_ = true;
+        throw std::runtime_error("Connection timed out");
+    }
+    CHUCHO_DEBUG_LGBL("Connected " << system_name_ << ':' << port_ << ' ' << name());
 }
 
 void service::connect_handler(std::shared_ptr<service> myself,
@@ -47,11 +52,18 @@ void service::connect_handler(std::shared_ptr<service> myself,
     }
     else
     {
-        CHUCHO_DEBUG_LGBL("Connected successfully to " << system_name_ <<
-            ':' << port_ << ' ' << name());
-        connect_sig_(system_name_, name(), port_);
+        if (stop_)
+        {
+            CHUCHO_DEBUG_LGBL_STR("Connection to service host succeeded after timeout");
+        }
+        else
+        {
+            CHUCHO_DEBUG_LGBL("Connected successfully to " << system_name_ <<
+                                                           ':' << port_ << ' ' << name());
+            connect_sig_(system_name_, name(), port_);
+            prom->set_value();
+        }
     }
-    prom->set_value();
 }
 
 void service::read_data_handler(std::shared_ptr<service> myself,
@@ -112,6 +124,8 @@ void service::read_length_handler(std::shared_ptr<service> myself,
 std::unique_ptr<access_reply> service::receive(std::uint32_t correlation_id,
                                                std::chrono::milliseconds max_wait)
 {
+    if (stop_)
+        throw std::runtime_error("Not connected");
     raw_reply rp;
     std::unique_lock<std::mutex> lock(reply_guard_);
     if(reply_cond_.wait_for(lock,
@@ -149,19 +163,28 @@ void service::resolve_handler(std::shared_ptr<service> myself,
     }
     else
     {
-        CHUCHO_DEBUG_LGBL("Resolved address of " << system_name_);
-        boost::asio::async_connect(sock_,
-                                   itor,
-                                   std::bind(&service::connect_handler,
-                                             this,
-                                             myself,
-                                             prom,
-                                             std::placeholders::_1));
+        if (stop_)
+        {
+            CHUCHO_DEBUG_LGBL_STR("Resolution of the service host succeded after timeout");
+        }
+        else
+        {
+            CHUCHO_DEBUG_LGBL("Resolved address of " << system_name_);
+            boost::asio::async_connect(sock_,
+                                       itor,
+                                       std::bind(&service::connect_handler,
+                                                 this,
+                                                 myself,
+                                                 prom,
+                                                 std::placeholders::_1));
+        }
     }
 }
 
 std::uint32_t service::send(access_request& req)
 {
+    if (stop_)
+        throw std::runtime_error("Not connected");
     auto corr = correlation_++;
     req.set_correlation_id(corr);
     req.finish();
@@ -210,6 +233,8 @@ void service::send_handler(std::shared_ptr<service> myself,
 
 void service::send_no_reply(access_request& req, std::chrono::milliseconds max_wait)
 {
+    if (stop_)
+        throw std::runtime_error("Not connected");
     auto corr = correlation_++;
     req.set_correlation_id(corr);
     req.finish();
