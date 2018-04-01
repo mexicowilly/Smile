@@ -54,7 +54,7 @@ void service::connect_handler(std::shared_ptr<service> myself,
     {
         if (stop_)
         {
-            CHUCHO_DEBUG_LGBL_STR("Connection to service host succeeded after timeout");
+            CHUCHO_INFO_LGBL_STR("Connection to service host succeeded after timeout");
         }
         else
         {
@@ -165,7 +165,7 @@ void service::resolve_handler(std::shared_ptr<service> myself,
     {
         if (stop_)
         {
-            CHUCHO_DEBUG_LGBL_STR("Resolution of the service host succeded after timeout");
+            CHUCHO_INFO_LGBL_STR("Resolution of the service host succeded after timeout");
         }
         else
         {
